@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 
-function App() {
+import './assets/App.css'
+
+export function App() {
+  const [value, setValue] = useState('');
+  const [fetchedData, setFetchedData] = useState({
+    value: '',
+    distance: 0,
+    total: 0,
+  })
+
+  const fetchData = useCallback(() => {
+    if (value) {
+      const distanceValue = Math.floor(Math.random() * 10 + 1);
+
+      const totalValue = Number(value) * distanceValue;
+      
+      const data = {
+        value,
+        distance: distanceValue,
+        total: totalValue,
+      };
+  
+      setFetchedData(data);
+    }
+  }, [value])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const handleSubmit = (e:FormEvent) => {
+    e.preventDefault();
+
+    fetchData();
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <form onSubmit={handleSubmit} className="App">
+      Valor: <input type="text" value={value} onChange={e => setValue(e.target.value)} /><br/><br/>
+      Valor: { fetchedData.value }<br/><br/>
+      Distância: { fetchedData.distance }<br/><br/>
+      Total: { fetchedData.total }<br/><br/>
+      <button type="submit">Calcular</button>
+    </form>
   );
 }
-
-export default App;
