@@ -1,10 +1,14 @@
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useState } from 'react';
 
 import './assets/App.css'
 
 export function App() {
+  const [origins, setOrigins] = useState('');
+  const [destinations, setDestinations] = useState('');
   const [value, setValue] = useState('');
   const [fetchedData, setFetchedData] = useState({
+    origins: '',
+    destinations: '',
     value: '',
     distance: 0,
     total: 0,
@@ -17,6 +21,8 @@ export function App() {
       const totalValue = Number(value) * distanceValue;
       
       const data = {
+        origins,
+        destinations,
         value,
         distance: distanceValue,
         total: totalValue,
@@ -24,11 +30,7 @@ export function App() {
   
       setFetchedData(data);
     }
-  }, [value])
-
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  }, [value, origins, destinations]);
 
   const handleSubmit = (e:FormEvent) => {
     e.preventDefault();
@@ -38,7 +40,11 @@ export function App() {
 
   return (
     <form onSubmit={handleSubmit} className="App">
+      Origem: <input type="text" value={origins} onChange={e => setOrigins(e.target.value)} /><br/><br/>
+      Destino: <input type="text" value={destinations} onChange={e => setDestinations(e.target.value)} /><br/><br/>
       Valor: <input type="text" value={value} onChange={e => setValue(e.target.value)} /><br/><br/>
+      Origem: { fetchedData.origins }<br/><br/>
+      Destino: { fetchedData.destinations }<br/><br/>
       Valor: { fetchedData.value }<br/><br/>
       Distância: { fetchedData.distance }<br/><br/>
       Total: { fetchedData.total }<br/><br/>
