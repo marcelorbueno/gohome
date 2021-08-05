@@ -1,7 +1,6 @@
-export interface IData {
-  destination_addresses: string[];
-  error_message?: string;
-  origin_addresses: string[];
+export interface IResponse {
+  destinationAddresses: string[];
+  originAddresses: string[];
   rows: [{
     elements: [
       {
@@ -21,5 +20,4 @@ export interface IData {
       }
     ]
   }];
-  status: string;
 }

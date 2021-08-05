@@ -1,4 +1,34 @@
-.title {
-  font-size: 64px;
-  color: #8257e6;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100vh;
+}
+
+body, input, button {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+}
+
+body {
+  margin: 1rem;
+}
+
+p {
+  margin-top: 1rem;
+}
+
+input[type="text"] {
+  border: 1px solid #ccc;
+  padding: 0.25rem 0.5rem;
+  margin-left: 0.5rem;
+}
+
+button[type="submit"] {
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+  padding: 0.25rem 1rem;
 }

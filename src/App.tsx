@@ -1,73 +1,104 @@
-import { FormEvent, useCallback, useState } from 'react';
-
-import { api } from './services/api';
+import React, { FormEvent, useState } from 'react';
+import { LoadScript, DistanceMatrixService } from '@react-google-maps/api';
 import { format_value } from './utils/format_value';
-import { IData } from './dto/IData';
 
 import './assets/App.css'
+import { IResponse } from './dto/IResponse';
 
 export function App() {
+  const [state, setState] = useState({
+    travelMode: 'DRIVING',
+    origin: [''],
+    destination: ['SP'],
+  })
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const [origins, setOrigins] = useState('');
   const [destinations, setDestinations] = useState('');
   const [value, setValue] = useState('');
   const [fetchedData, setFetchedData] = useState({
-    origins: '',
-    destinations: '',
-    value: '',
-    distance: '',
-    total: '',
+    origins: '-',
+    destinations: '-',
+    value: '-',
+    distance: '-',
+    total: '-',
   })
 
-  const fetchData = useCallback(async () => {
-    // const origins = 'Boston,MA'
-    // const destinations = 'Lexington,MA'
+  const key = process.env.REACT_APP_API_KEY || 'default'
 
-    if (value && origins && destinations) {
-      const parameters = `json?origins=${origins}&destinations=${destinations}&departure_time=now&key=${process.env.REACT_APP_API_KEY}`;
-
-      const json: IData = await api.get(`${parameters}`);
-      
-      if (json.status === 'OK') {
-        const distanceText = json.rows[0].elements[0].distance.text;
-
+  const distanceCallback = (response: IResponse) => {
+    if (isSubmitted && response !== null) {
+      if (response.rows[0].elements[0].status === 'OK') {
+        console.log(response);
+        
+        const distanceText = response.rows[0].elements[0].distance.text;
+  
         const distanceArray = distanceText.split(' km');
-
+  
         const distanceValue = Number(distanceArray[0].replace(',', '.'));
-
+  
         const totalValue = Number(value) * distanceValue;
-
+        
         const data = {
-          origins,
-          destinations,
+          origins: response.originAddresses[0],
+          destinations: response.destinationAddresses[0],
           value: format_value(Number(value)),
           distance: distanceText,
           total: format_value(totalValue),
         };
 
         setFetchedData(data);
-      } else {
-        window.alert(json.error_message)
       }
     }
-  }, [value, origins, destinations]);
 
-  const handleSubmit = (e:FormEvent) => {
-    e.preventDefault();
+    setIsSubmitted(false)
+  };
 
-    fetchData();
+  function handleSubmit (event: FormEvent) {
+    event.preventDefault();
+
+    if (origins && destinations && value) {
+      setState(() => ({
+        travelMode: "DRIVING",
+        origin: [origins],
+        destination: [destinations],
+      }));
+  
+      setIsSubmitted(true)
+    } else {
+      console.log('Preencha os campos Origem, Destino e Valor por KM')
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="App">
-      Origem: <input type="text" value={origins} onChange={e => setOrigins(e.target.value)} /><br/><br/>
-      Destino: <input type="text" value={destinations} onChange={e => setDestinations(e.target.value)} /><br/><br/>
-      Valor por KM (R$): <input type="text" value={value} onChange={e => setValue(e.target.value)} /><br/><br/>
-      Origem: { fetchedData.origins }<br/><br/>
-      Destino: { fetchedData.destinations }<br/><br/>
-      Valor por KM: { fetchedData.value }<br/><br/>
-      Distância: { fetchedData.distance }<br/><br/>
-      Total: { fetchedData.total }<br/><br/>
-      <button type="submit">Calcular</button>
-    </form>
-  );
+    <>
+      <LoadScript
+        googleMapsApiKey={key}
+      >
+        <DistanceMatrixService
+          options={{
+            destinations: state.destination,
+            origins: state.origin,
+            travelMode: state.travelMode,
+          }}
+          callback={distanceCallback}
+        />
+      </LoadScript>
+      
+      <h1>Go Home</h1>
+
+      <form onSubmit={handleSubmit} className="App">
+        <p><b>Origem:</b> <input type="text" value={origins} onChange={e => setOrigins(e.target.value)} /></p>
+        <p><b>Destino:</b> <input type="text" value={destinations} onChange={e => setDestinations(e.target.value)} /></p>
+        <p><b>Valor por KM (R$):</b> <input type="text" value={value} onChange={e => setValue(e.target.value)} /></p>
+        <p><b>Origem:</b> { fetchedData.origins }</p>
+        <p><b>Destino:</b> { fetchedData.destinations }</p>
+        <p><b>Valor por KM:</b> { fetchedData.value }</p>
+        <p><b>Distância:</b> { fetchedData.distance }</p>
+        <p><b>Total:</b> { fetchedData.total }</p>
+        <button type="submit">Calcular</button>
+      </form>
+    </>
+  )
 }
