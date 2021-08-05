@@ -27,8 +27,26 @@ input[type="text"] {
   margin-left: 0.5rem;
 }
 
+.box-buttons {
+  display: flex;
+  align-items: center;
+  vertical-align: center;
+  position: relative;
+}
+
 button[type="submit"] {
   margin-top: 1rem;
   border: 1px solid #ccc;
   padding: 0.25rem 1rem;
+}
+
+.loading {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  top: 6px;
+}
+
+.d-none {
+  display: none;
 }

@@ -2,8 +2,11 @@ import React, { FormEvent, useState } from 'react';
 import { LoadScript, DistanceMatrixService } from '@react-google-maps/api';
 import { format_value } from './utils/format_value';
 
-import './assets/App.css'
 import { IResponse } from './dto/IResponse';
+
+import loading from './assets/img/loading.svg'
+
+import './assets/styles/App.css'
 
 export function App() {
   const [state, setState] = useState({
@@ -13,7 +16,6 @@ export function App() {
   })
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const [origins, setOrigins] = useState('');
   const [destinations, setDestinations] = useState('');
   const [value, setValue] = useState('');
@@ -22,6 +24,7 @@ export function App() {
     destinations: '-',
     value: '-',
     distance: '-',
+    duration: '-',
     total: '-',
   })
 
@@ -45,6 +48,7 @@ export function App() {
           destinations: response.destinationAddresses[0],
           value: format_value(Number(value)),
           distance: distanceText,
+          duration: response.rows[0].elements[0].duration.text,
           total: format_value(totalValue),
         };
 
@@ -96,8 +100,12 @@ export function App() {
         <p><b>Destino:</b> { fetchedData.destinations }</p>
         <p><b>Valor por KM:</b> { fetchedData.value }</p>
         <p><b>Distância:</b> { fetchedData.distance }</p>
+        <p><b>Tempo estimado:</b> { fetchedData.duration }</p>
         <p><b>Total:</b> { fetchedData.total }</p>
-        <button type="submit">Calcular</button>
+        <div className="box-buttons">
+          <button type="submit">Calcular</button>
+          <img className={ isSubmitted ? 'loading' : 'loading d-none' } src={loading} alt="Caregando..." />
+        </div>
       </form>
     </>
   )

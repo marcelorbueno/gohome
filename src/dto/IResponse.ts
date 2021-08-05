@@ -12,10 +12,6 @@ export interface IResponse {
           text: string;
           value: number;
         },
-        duration_in_traffic: {
-          text: string;
-          value: number;
-        },
         status: string;
       }
     ]
