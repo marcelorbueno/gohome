@@ -23,7 +23,7 @@ export function App() {
     // const destinations = 'Lexington,MA'
 
     if (value && origins && destinations) {
-      const parameters = `origins=${origins}&destinations=${destinations}&departure_time=now&key=${process.env.REACT_APP_API_KEY}`;
+      const parameters = `json?origins=${origins}&destinations=${destinations}&departure_time=now&key=${process.env.REACT_APP_API_KEY}`;
 
       const json: IData = await api.get(`${parameters}`);
       
