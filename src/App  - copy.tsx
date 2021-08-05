@@ -9,8 +9,8 @@ export function App() {
   const [total, setTotal] = useState(0);
   const [labelTotal, setLabelTotal] = useState('');
 
-  // const origins = 'Boston,MA|Charlestown,MA'
-  // const destinations = 'Lexington,MA|Concord,MA'
+  // const origins = 'Boston,MA'
+  // const destinations = 'Lexington,MA'
 
   useEffect(() => {
 
