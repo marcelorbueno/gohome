@@ -50,3 +50,8 @@ button[type="submit"] {
 .d-none {
   display: none;
 }
+
+.separator {
+  border-bottom: 1px solid #ccc;
+  height: 1px;
+}

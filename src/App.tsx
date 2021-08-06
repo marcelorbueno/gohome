@@ -18,11 +18,15 @@ export function App() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [origins, setOrigins] = useState('');
   const [destinations, setDestinations] = useState('');
-  const [value, setValue] = useState('');
+  const [departureFee, setDepartureFee] = useState('15');
+  const [value, setValue] = useState('2');
+  const [maintenanceFee, setMaintenanceFee] = useState('5');
   const [fetchedData, setFetchedData] = useState({
     origins: '-',
     destinations: '-',
-    value: '-',
+    departureFee: 'R$ 15,00',
+    value: 'R$ 2,00',
+    maintenanceFee: 'R$ 5,00',
     distance: '-',
     duration: '-',
     total: '-',
@@ -41,12 +45,14 @@ export function App() {
   
         const distanceValue = Number(distanceArray[0].replace(',', '.'));
   
-        const totalValue = Number(value) * distanceValue;
+        const totalValue = Number(departureFee) + (Number(value) * distanceValue) + Number(maintenanceFee);
         
         const data = {
           origins: response.originAddresses[0],
           destinations: response.destinationAddresses[0],
+          departureFee: format_value(Number(departureFee)),
           value: format_value(Number(value)),
+          maintenanceFee: format_value(Number(maintenanceFee)),
           distance: distanceText,
           duration: response.rows[0].elements[0].duration.text,
           total: format_value(totalValue),
@@ -62,7 +68,7 @@ export function App() {
   function handleSubmit (event: FormEvent) {
     event.preventDefault();
 
-    if (origins && destinations && value) {
+    if (origins && destinations && departureFee && value && maintenanceFee) {
       setState(() => ({
         travelMode: "DRIVING",
         origin: [origins],
@@ -95,17 +101,22 @@ export function App() {
       <form onSubmit={handleSubmit} className="App">
         <p><b>Origem:</b> <input type="text" value={origins} onChange={e => setOrigins(e.target.value)} /></p>
         <p><b>Destino:</b> <input type="text" value={destinations} onChange={e => setDestinations(e.target.value)} /></p>
+        <p><b>Taxa de Partida (R$):</b> <input type="text" value={departureFee} onChange={e => setDepartureFee(e.target.value)} /></p>
         <p><b>Valor por KM (R$):</b> <input type="text" value={value} onChange={e => setValue(e.target.value)} /></p>
-        <p><b>Origem:</b> { fetchedData.origins }</p>
-        <p><b>Destino:</b> { fetchedData.destinations }</p>
-        <p><b>Valor por KM:</b> { fetchedData.value }</p>
-        <p><b>Distância:</b> { fetchedData.distance }</p>
-        <p><b>Tempo estimado:</b> { fetchedData.duration }</p>
-        <p><b>Total:</b> { fetchedData.total }</p>
+        <p><b>Taxa de Manutenção (R$):</b> <input type="text" value={maintenanceFee} onChange={e => setMaintenanceFee(e.target.value)} /></p>
         <div className="box-buttons">
           <button type="submit">Calcular</button>
           <img className={ isSubmitted ? 'loading' : 'loading d-none' } src={loading} alt="Caregando..." />
         </div>
+        <p className="separator"></p>
+        <p><b>Origem:</b> { fetchedData.origins }</p>
+        <p><b>Destino:</b> { fetchedData.destinations }</p>
+        <p><b>Taxa de Partida:</b> { fetchedData.departureFee }</p>
+        <p><b>Valor por KM:</b> { fetchedData.value }</p>
+        <p><b>Taxa de Manutenção:</b> { fetchedData.maintenanceFee }</p>
+        <p><b>Distância:</b> { fetchedData.distance }</p>
+        <p><b>Tempo estimado:</b> { fetchedData.duration }</p>
+        <p><b>Total:</b> { fetchedData.total }</p>
       </form>
     </>
   )
